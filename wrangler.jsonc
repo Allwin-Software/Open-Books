@@ -2,13 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "open-books-worker",
   "main": "src/index.ts",
-  "compatibility_date": "2025-04-12"
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
+  "compatibility_date": "2025-04-12",
+  "compatibility_flags": ["nodejs_compat_v2"],
+  "vars": {}
   // "kv_namespaces": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",
