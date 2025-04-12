@@ -4,7 +4,9 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-04-12",
   "compatibility_flags": ["nodejs_compat_v2"],
-  "vars": {}
+  "vars": {
+    "MONGODB_DB_NAME": "OpenBooks"
+  }
   // "kv_namespaces": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",

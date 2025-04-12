@@ -1,7 +1,11 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { MongoClient, MongoClientOptions } from "mongodb";
 
+import costCenters from "./cost-centers";
+
 const app = new Hono();
+app.use("/*", cors());
 
 app.get("/", async (c) => {
   let client = null;
@@ -21,5 +25,7 @@ app.get("/", async (c) => {
   const result = await coll.findOne({});
   return c.json(result);
 });
+
+app.route("/costCenters", costCenters);
 
 export default app;
