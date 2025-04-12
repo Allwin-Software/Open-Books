@@ -5,7 +5,7 @@ const app = new Hono();
 
 app.get("/", async (c) => {
   let client = null;
-  console.log("request received");
+  console.log("request received 1");
   const dbConnectionString = (c.env as any).MONGODB_URI;
   console.log("Connection String", dbConnectionString);
   client ??= new MongoClient((c.env as any).MONGODB_URI, {
