@@ -12,7 +12,7 @@ function getCostCenterCollection(context: Context) {
 
 costCenters.get("/", async (c) => {
   const coll = getCostCenterCollection(c);
-  const result = await coll.findOne({});
+  const result = await coll.find().toArray();
   return c.json(result);
 });
 
