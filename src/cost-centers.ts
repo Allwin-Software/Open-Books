@@ -51,7 +51,7 @@ costCenters.delete("/:id", async (c) => {
   if (result.deletedCount === 0) {
     return c.json({ success: "false", message: "Cost center not found" }, 404);
   }
-  return c.json({ success: "true", message: "Cost center deleted successfully" }, 200);
+  return c.json({ success: true, message: "Cost center deleted successfully" }, 200);
 });
 
 export default costCenters;
