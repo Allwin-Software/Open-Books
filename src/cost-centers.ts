@@ -1,17 +1,10 @@
 import { Context, Hono } from "hono";
 import { ObjectId } from "mongodb";
 
-import { getDbInstance } from "./helpers/db.helper";
+import { getDbInstance, getCostCenterCollection, getExpensesCollection } from "./helpers/db.helper";
 import { CostCenterSchema } from "./schemas/cost-center-schema";
 
 const costCenters = new Hono();
-
-function getCostCenterCollection(context: Context) {
-  const db = getDbInstance(context);
-  const costCenterCollectionName = "costCenters";
-  const coll = db.collection(costCenterCollectionName);
-  return coll;
-}
 
 costCenters.get("/", async (c) => {
   const coll = getCostCenterCollection(c);
@@ -52,6 +45,45 @@ costCenters.delete("/:id", async (c) => {
     return c.json({ success: false, message: "Cost center not found" }, 404);
   }
   return c.json({ success: true, message: "Cost center deleted successfully" }, 200);
+});
+
+costCenters.get("/reconcile", async (c) => {
+  const costCenterCollection = getCostCenterCollection(c);
+  const expensesCollection = getExpensesCollection(c);
+
+  const aggregationResult = await expensesCollection
+    .aggregate([{ $group: { _id: "$costCenterId", totalCost: { $sum: "$amount" } } }])
+    .toArray();
+
+  console.log("Aggregation Result:", aggregationResult);
+
+  for (let i = 0; i < aggregationResult.length; i++) {
+    const result = aggregationResult[i];
+    const costCenterId: string = result._id;
+    const totalCost = result.totalCost;
+    const updateResult = await costCenterCollection.updateOne(
+      { _id: new ObjectId(costCenterId) },
+      { $set: { totalCost } }
+    );
+  }
+  return c.json({ success: true, message: "Cost center reconciled successfully" }, 200);
+});
+
+costCenters.get("/reconcile/:id", async (c) => {
+  const costCenterCollection = getCostCenterCollection(c);
+  const expensesCollection = getExpensesCollection(c);
+  const costCenterId = c.req.param("id");
+  console.log("Cost Center ID:", costCenterId);
+  const costCenter = await expensesCollection.findOne({ costCenterId: costCenterId });
+  console.log("Cost Center:", costCenter);
+
+  const aggregationResult = await expensesCollection
+    .aggregate([{ $match: { costCenterId: costCenterId } }, { $group: { _id: null, totalCost: { $sum: "$amount" } } }])
+    .toArray();
+  console.log("Aggregation Result:", aggregationResult);
+  const totalCost = aggregationResult.length > 0 ? aggregationResult[0].totalCost : 0;
+  await costCenterCollection.updateOne({ _id: new ObjectId(costCenterId) }, { $set: { totalCost } });
+  return c.json({ success: true, message: "Cost center reconciled successfully" }, 200);
 });
 
 export default costCenters;

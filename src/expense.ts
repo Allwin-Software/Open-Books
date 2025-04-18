@@ -1,15 +1,8 @@
 import { Context, Hono } from "hono";
-import { getDbInstance } from "./helpers/db.helper";
+import { getExpensesCollection } from "./helpers/db.helper";
 import { ExpensesSchema } from "./schemas/expenses-schema";
 
 const expenses = new Hono();
-
-function getExpensesCollection(context: Context) {
-  const db = getDbInstance(context);
-  const expensesCollectionName = "expenses";
-  const coll = db.collection(expensesCollectionName);
-  return coll;
-}
 
 expenses.get("/", async (c) => {
   const coll = getExpensesCollection(c);

@@ -7,3 +7,17 @@ export function getDbInstance(context: Context) {
   const client = new MongoClient(dbConnectionString);
   return client.db(dbName);
 }
+
+export function getCostCenterCollection(context: Context) {
+  const db = getDbInstance(context);
+  const costCenterCollectionName = "costCenters";
+  const coll = db.collection(costCenterCollectionName);
+  return coll;
+}
+
+export function getExpensesCollection(context: Context) {
+  const db = getDbInstance(context);
+  const expensesCollectionName = "expenses";
+  const coll = db.collection(expensesCollectionName);
+  return coll;
+}

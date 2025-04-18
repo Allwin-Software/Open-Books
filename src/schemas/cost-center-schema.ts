@@ -3,6 +3,7 @@ import { z } from "zod";
 const CostCenterSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   description: z.string().optional(),
+  totalCost: z.number().optional(),
 });
 
 type CostCenter = z.infer<typeof CostCenterSchema>;
